@@ -1,0 +1,12 @@
+restartshelly:
+    alias: "Restart HA if Shelly isn't found after 15 minutes"
+    sequence:
+      - delay:
+          minutes: 15
+      - service: notify.pushbullet
+        data:
+          message: 'Shelly not found, restarting HA'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.outside_yard_shelly
+  

@@ -1,0 +1,90 @@
+- id: '1547298030919'
+  alias: Evening turn-on outside lights
+  trigger:
+  - event: sunset
+    offset: 00:20:00
+    platform: sun
+  condition: []
+  action:
+  - alias: ''
+    data:
+      entity_id: group.outside
+    service: light.turn_on
+  - data:
+      entity_id: switch.outside_yard_shelly
+    service: switch.turn_on
+  initial_state: true
+- id: '1547323727163'
+  alias: Evening turn-off outside lights
+  initial_state: true
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: group.outside
+    service: light.turn_off
+  - data:
+      entity_id: switch.outside_yard_shelly
+    service: switch.turn_off
+- id: shellies_announce
+  alias: Shellies Announce
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+    service: mqtt.publish
+    data:
+      topic: shellies/command
+      payload: announce
+- id: '1549115345880'
+  alias: Idan or shany got home
+  trigger:
+  - entity_id: sensor.device_status_idan_phone
+    from: offline
+    platform: state
+    to: online
+  condition:
+  - after: '22:00'
+    before: 02:00
+    condition: time
+  action:
+  - data:
+      entity_id: switch.outside_yard_shelly
+    service: switch.turn_on
+  - delay: 0:00:35
+  - data:
+      entity_id: switch.outside_yard_shelly
+    service: switch.turn_off
+  initial_state: true
+- id: Restart HA if Shelly switch isn't found after 15 minutes
+  alias: Restart HA if Shelly switch isn't found after 15 minutes
+  trigger:
+  - entity_id: device_tracker.outside_yard_shelly
+    from: not_home
+    platform: state
+    to: home
+  condition:
+  - condition: template
+    value_template: '{% if states.switch.outside_yard_shelly %}false{% else %}true{%
+      endif %}'
+  - condition: state
+    entity_id: script.restartshelly
+    state: 'off'
+  action:
+  - entity_id: script.restartshelly
+    service: homeassistant.turn_on
+- id: Stop HA
+  trigger:
+    platform: template
+    value_template: '{% if states.switch.outside_yard_shelly %}true{% else %}false{%
+      endif %}'
+  action:
+    service: homeassistant.turn_off
+    entity_id: script.restartshelly
+  alias: Stop restarting HA is Shelly is found
+  condition:
+    condition: state
+    entity_id: script.restartshelly
+    state: 'on'
