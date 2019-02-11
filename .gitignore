@@ -5,7 +5,8 @@
 !*.yaml
 !.gitignore
 !*.md
-!custom_components
+!custom_components/sensor
+!custom_components/device_tracker
 !config
 
 
