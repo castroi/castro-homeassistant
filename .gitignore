@@ -5,10 +5,8 @@
 !*.yaml
 !.gitignore
 !*.md
-!custom_components/sensor
-!custom_components/device_tracker
+!/custom_components/*
 !config
-!custom_components
 
 # Ignore folders.
 .storage
