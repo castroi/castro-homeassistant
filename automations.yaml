@@ -83,7 +83,7 @@
   action:
     service: homeassistant.turn_off
     entity_id: script.restartshelly
-  alias: Stop restarting HA is Shelly is found
+  alias: Stop restarting HA is shelly is found
   condition:
     condition: state
     entity_id: script.restartshelly
